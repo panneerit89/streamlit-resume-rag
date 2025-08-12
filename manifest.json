@@ -1,0 +1,49 @@
+{
+  "name": "Resume RAG Chatbot",
+  "short_name": "Resume RAG",
+  "description": "AI-powered resume analysis and candidate screening chatbot with ChatGPT-5 inspired interface",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f23",
+  "theme_color": "#64ffda",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US",
+  "categories": ["productivity", "business", "utilities"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxwYXRoIGQ9Ik05NiA0OEM3NC40IDQ4IDU2IDY2LjQgNTYgODhWMTI4QzU2IDEzNi44IDYzLjIgMTQ0IDcyIDE0NEgxMjBDMTI4LjggMTQ0IDEzNiAxMzYuOCAxMzYgMTI4Vjg4QzEzNiA2Ni40IDExNy42IDQ4IDk2IDQ4WiIgZmlsbD0iIzY0ZmZkYSIvPgo8cGF0aCBkPSJNODggNzJIMTA0Vjg4SDg4VjcyWiIgZmlsbD0iIzBmMGYyMyIvPgo8cGF0aCBkPSJNNzIgMTA0SDEyMFYxMTJINzJWMTA0WiIgZmlsbD0iIzBmMGYyMyIvPgo8cGF0aCBkPSJNNzIgMTIwSDEwNFYxMjhINzJWMTIwWiIgZmlsbD0iIzBmMGYyMyIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudDBfbGluZWFyXzFfMSIgeDE9IjAiIHkxPSIwIiB4Mj0iMTkyIiB5Mj0iMTkyIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiMwZjBmMjMiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMWExYTJlIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPC9zdmc+",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iNjQiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8yXzIpIi8+CjxwYXRoIGQ9Ik0yNTYgMTI4QzE5OC40IDEyOCAxNTIgMTc0LjQgMTUyIDIzMlYzNDRDMTUyIDM2Ny4yIDEwOC44IDM4NCAxNjAgMzg0SDM1MkMzNjcuMiAzODQgMzg0IDM2Ny4yIDM4NCAzNTJWMjMyQzM4NCAxNzQuNCAzMzYuNiAxMjggMjU2IDEyOFoiIGZpbGw9IiM2NGZmZGEiLz4KPHBhdGggZD0iTTIyNCAxOTJIMjg4VjIzMkgyMjRWMTkyWiIgZmlsbD0iIzBmMGYyMyIvPgo8cGF0aCBkPSJNMTkyIDI3Nkgz ODRWMjk2SDE5MlYyNzZaIiBmaWxsPSIjMGYwZjIzIi8+CjxwYXRoIGQ9Ik0xOTIgMzIwSDI4OFYzNDBIMTkyVjMyMFoiIGZpbGw9IiMwZjBmMjMiLz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQwX2xpbmVhcl8yXzIiIHgxPSIwIiB5MT0iMCIgeDI9IjUxMiIgeTI9IjUxMiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjMGYwZjIzIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFhMWEyZSIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPg==",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4MCIgaGVpZ2h0PSI3MjAiIHZpZXdCb3g9IjAgMCAxMjgwIDcyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyODAiIGhlaWdodD0iNzIwIiBmaWxsPSJ1cmwoI2dyYWRpZW50MCkiLz4KPHRleHQgeD0iNjQwIiB5PSIzNjAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjQ4IiBmaWxsPSIjNjRmZmRhIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5SZXN1bWUgUkFHIENoYXRib3Q8L3RleHQ+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MCIgeDE9IjAiIHkxPSIwIiB4Mj0iMTI4MCIgeTI9IjcyMCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjMGYwZjIzIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE2MjEzZSIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPg==",
+      "sizes": "1280x720",
+      "type": "image/svg+xml",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Upload Resume",
+      "short_name": "Upload",
+      "description": "Upload and analyze resume PDFs",
+      "url": "/?action=upload",
+      "icons": [
+        {
+          "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIGZpbGw9IiM2NGZmZGEiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTQsMkg2QTIsMiAwIDAsMCA0LDRWMjBBMiwyIDAgMCwwIDYsMjJIMThBMiwyIDAgMCwwIDIwLDIwVjhMMTQsMk0xOCwyMEg2VjRIOTM1VjlIMTRWMjBaIi8+PC9zdmc+",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}

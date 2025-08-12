@@ -1,22 +1,64 @@
-# Resume RAG Chatbot
+# 🤖 Resume RAG Chatbot (PWA)
 
-A Streamlit-based RAG (Retrieval Augmented Generation) chatbot for processing and querying resume PDFs using intelligent pattern matching and vector search.
+A Progressive Web App (PWA) built with Streamlit for AI-powered resume analysis and candidate screening. Features a ChatGPT-5 inspired interface with offline capabilities.
 
-## Features
+## ✨ Features
 
-- Upload multiple PDF resumes
-- Process and index resume content using ChromaDB vector store
-- Query candidates using natural language with precise answers
-- Pattern-based extraction for specific information (phone, email, skills)
-- Fast loading with optimized search algorithms
+### 🎯 Core Functionality
+- **📤 Upload multiple PDF resumes** with drag & drop interface
+- **🔍 AI-powered search** using ChromaDB vector store
+- **💬 Natural language queries** with precise pattern-matching answers
+- **📱 Progressive Web App** - installable on mobile and desktop
+- **🌐 Offline support** with service worker caching
 
-## Installation
+### 🎨 Modern Interface
+- **ChatGPT-5 inspired design** with dark theme
+- **Glassmorphism effects** and smooth animations
+- **Responsive layout** optimized for all devices
+- **Fast loading** with optimized search algorithms
 
-1. Make sure you have Python 3.8+ installed
-2. Install the required dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 🔍 Smart Search Capabilities
+- Extract contact information (phone, email)
+- Identify technical skills and programming languages
+- Find experience levels and years of work
+- Compare candidates across multiple criteria
+
+## 🚀 Quick Start
+
+### Local Development
+```bash
+# Clone the repository
+git clone https://github.com/panneerit89/streamlit-resume-rag.git
+cd streamlit-resume-rag
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the application
+streamlit run rag_chatbot.py
+```
+
+### 🌐 Netlify Deployment
+
+#### Option 1: Direct GitHub Integration
+1. **Fork/Clone** this repository to your GitHub account
+2. **Connect to Netlify**:
+   - Go to [Netlify](https://netlify.com) → New site from Git
+   - Connect your GitHub repository
+   - Build settings are automatically configured via `netlify.toml`
+
+#### Option 2: Manual Deployment
+1. **Build command**: `python deploy.py`
+2. **Publish directory**: `.`
+3. **Runtime**: Python 3.9 (specified in `runtime.txt`)
+
+### ⚙️ Environment Configuration
+
+The app automatically configures itself for deployment with:
+- **Streamlit config** optimized for production
+- **PWA manifest** for mobile installation
+- **Service worker** for offline functionality
+- **Netlify redirects** for SPA routing
 
 ## Usage
 

@@ -10,13 +10,46 @@ from langchain.prompts import PromptTemplate
 import torch
 import re
 
-# ChatGPT-5 inspired styling with dark theme
+# ChatGPT-5 inspired styling with dark theme + PWA support
 st.set_page_config(
     page_title="Resume RAG Chatbot",
     page_icon="🤖",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+
+# PWA Configuration and Meta Tags
+st.markdown("""
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#64ffda">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Resume RAG">
+    <meta name="description" content="AI-powered resume analysis and candidate screening chatbot">
+    <meta name="keywords" content="resume, AI, chatbot, recruitment, screening">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.json">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIyNCIgZmlsbD0idXJsKCNncmFkaWVudDApIi8+PHBhdGggZD0iTTk2IDQ4Qzc0LjQgNDggNTYgNjYuNCA1NiA4OFYxMjhDNTYgMTM2LjggNjMuMiAxNDQgNzIgMTQ0SDEyMEMxMjguOCAxNDQgMTM2IDEzNi44IDEzNiAxMjhWODhDMTM2IDY2LjQgMTE3LjYgNDggOTYgNDhaIiBmaWxsPSIjNjRmZmRhIi8+PC9zdmc+">
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./sw.js')
+                .then(function(registration) {
+                    console.log('ServiceWorker registration successful');
+                }, function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+</head>
+""", unsafe_allow_html=True)
 
 # Custom CSS for ChatGPT-5 inspired desi        <div style="font-size: 4rem; margin-bottom: 1rem;">🚀</div>n
 st.markdown("""

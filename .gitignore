@@ -14,8 +14,7 @@ ENV/
 .vscode/
 
 # Streamlit cache/state
-.streamlit/
-**/.streamlit/secrets.toml
+.streamlit/secrets.toml
 
 # Data & temp
 *.db
@@ -55,3 +54,12 @@ Icon
 
 # Node (if any)
 node_modules/
+
+# Deployment
+build/
+dist/
+*.egg-info/
+
+# Netlify
+.netlify/
+netlify-cli/
