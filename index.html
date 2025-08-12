@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#64ffda">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Resume RAG">
+    <meta name="description" content="AI-powered resume analysis and candidate screening chatbot">
+    
+    <title>Resume RAG Chatbot</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.json">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIyNCIgZmlsbD0idXJsKCNncmFkaWVudDApIi8+PHBhdGggZD0iTTk2IDQ4Qzc0LjQgNDggNTYgNjYuNCA1NiA4OFYxMjhDNTYgMTM2LjggNjMuMiAxNDQgNzIgMTQ0SDEyMEMxMjguOCAxNDQgMTM2IDEzNi44IDEzNiAxMjhWODhDMTM2IDY2LjQgMTE3LjYgNDggOTYgNDhaIiBmaWxsPSIjNjRmZmRhIi8+PC9zdmc+">
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e5e5e5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 800px;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin: 2rem;
+        }
+        
+        .title {
+            background: linear-gradient(90deg, #64ffda, #00bcd4, #0096c7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .subtitle {
+            color: #a0a0a0;
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+        
+        .info-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            text-align: left;
+        }
+        
+        .launch-btn {
+            background: linear-gradient(90deg, #64ffda, #00bcd4);
+            color: #0f0f23;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 1rem 2rem;
+            margin: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(100, 255, 218, 0.3);
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .launch-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(100, 255, 218, 0.4);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, rgba(100, 255, 218, 0.1), rgba(0, 188, 212, 0.1));
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .deploy-info {
+            background: linear-gradient(90deg, rgba(255, 152, 0, 0.1), rgba(255, 193, 7, 0.1));
+            border-left: 4px solid #ff9800;
+            color: #ffb74d;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            text-align: left;
+        }
+        
+        .code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            margin: 0.5rem 0;
+            display: inline-block;
+        }
+        
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            .container {
+                margin: 1rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">🤖 Resume RAG Chatbot</h1>
+        <p class="subtitle">AI-Powered Resume Analysis & Candidate Screening</p>
+        
+        <div class="deploy-info">
+            <h3>🚀 Deployment in Progress</h3>
+            <p>This is a Streamlit application that requires a Python runtime environment. Since Netlify is primarily designed for static sites, the app deployment is being optimized.</p>
+            
+            <h4>Alternative Deployment Options:</h4>
+            <ul>
+                <li><strong>Streamlit Cloud:</strong> <span class="code">https://share.streamlit.io</span></li>
+                <li><strong>Heroku:</strong> Full Python app deployment</li>
+                <li><strong>Railway:</strong> Modern Python hosting</li>
+                <li><strong>Local Development:</strong> Run <span class="code">streamlit run rag_chatbot.py</span></li>
+            </ul>
+        </div>
+        
+        <div class="features">
+            <div class="feature-card">
+                <span class="icon">📤</span>
+                <h3>Upload PDFs</h3>
+                <p>Drag & drop multiple resume PDFs for AI processing</p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="icon">⚡</span>
+                <h3>AI Processing</h3>
+                <p>Advanced AI extracts and indexes candidate information</p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="icon">💬</span>
+                <h3>Ask Questions</h3>
+                <p>Get instant, intelligent answers about candidates</p>
+            </div>
+            
+            <div class="feature-card">
+                <span class="icon">🔍</span>
+                <h3>Smart Search</h3>
+                <p>Find contacts, skills, experience with natural language</p>
+            </div>
+        </div>
+        
+        <div class="info-card">
+            <h3>📋 Quick Setup (Local Development)</h3>
+            <div class="code">git clone https://github.com/panneerit89/streamlit-resume-rag.git</div><br>
+            <div class="code">cd streamlit-resume-rag</div><br>
+            <div class="code">pip install -r requirements.txt</div><br>
+            <div class="code">streamlit run rag_chatbot.py</div>
+        </div>
+        
+        <a href="https://github.com/panneerit89/streamlit-resume-rag" class="launch-btn">
+            📂 View Source Code
+        </a>
+        
+        <a href="https://share.streamlit.io" class="launch-btn">
+            🚀 Deploy on Streamlit Cloud
+        </a>
+    </div>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./sw.js')
+                .then(function(registration) {
+                    console.log('ServiceWorker registration successful');
+                }, function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+        
+        // PWA Install Prompt
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            deferredPrompt = e;
+            
+            const installButton = document.createElement('button');
+            installButton.textContent = '📱 Install App';
+            installButton.className = 'launch-btn';
+            installButton.style.marginTop = '1rem';
+            
+            installButton.addEventListener('click', (e) => {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            });
+            
+            document.querySelector('.container').appendChild(installButton);
+        });
+    </script>
+</body>
+</html>

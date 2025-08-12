@@ -1,37 +1,6 @@
 [build]
-  command = "pip install -r requirements.txt"
+  command = "echo 'Building static PWA for Resume RAG Chatbot'"
   publish = "."
-
-[build.environment]
-  PYTHON_VERSION = "3.9"
-
-[[redirects]]
-  from = "/*"
-  to = "/streamlit"
-  status = 200
-
-[build.processing]
-  skip_processing = false
-
-[build.processing.css]
-  bundle = true
-  minify = true
-
-[build.processing.js]
-  bundle = true
-  minify = true
-
-[functions]
-  directory = "netlify/functions"
-
-# Streamlit specific configuration
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "SAMEORIGIN"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' ws: wss:;"
 
 # Enable PWA features
 [[headers]]
@@ -44,3 +13,15 @@
   [headers.values]
     Content-Type = "application/javascript"
     Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+
+# SPA redirect for PWA
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
