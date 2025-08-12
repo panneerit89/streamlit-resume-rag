@@ -1,0 +1,15 @@
+{
+  "name": "resume-rag-pwa",
+  "version": "1.0.0",
+  "description": "Resume RAG Chatbot - Progressive Web App",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Static site - no build required'",
+    "start": "echo 'Static site ready'"
+  },
+  "keywords": ["pwa", "resume", "ai", "chatbot", "rag"],
+  "author": "panneerit89",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}

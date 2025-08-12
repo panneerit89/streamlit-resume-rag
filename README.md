@@ -32,7 +32,7 @@ git clone https://github.com/panneerit89/streamlit-resume-rag.git
 cd streamlit-resume-rag
 
 # Install dependencies
-pip install -r requirements.txt
+pip install -r requirements-python.txt
 
 # Run the application
 streamlit run rag_chatbot.py
