@@ -1,0 +1,57 @@
+# Python and Streamlit
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.DS_Store
+.env
+.venv/
+venv/
+ENV/
+.env.*
+
+# VS Code
+.vscode/
+
+# Streamlit cache/state
+.streamlit/
+**/.streamlit/secrets.toml
+
+# Data & temp
+*.db
+*.sqlite3
+*.sqlite
+*.log
+*.tmp
+*.temp
+*.swp
+*.bak
+*.old
+*.pid
+.temp/
+.tmp/
+
+# Chroma vector store and embeddings
+chroma/
+chroma.db/
+**/chroma/**
+**/chromadb/**
+
+# Local uploads
+uploads/
+**/uploads/**
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Jupyter
+.ipynb_checkpoints/
+
+# PyCharm
+.idea/
+
+# Node (if any)
+node_modules/
