@@ -1,11 +1,11 @@
 import streamlit as st
 import os
 import tempfile
-from sentence_transformers import SentenceTransformer
-import faiss
 import numpy as np
 import re
 import io
+from collections import Counter
+import math
 
 # ChatGPT-5 inspired styling with dark theme + PWA support
 st.set_page_config(
@@ -293,13 +293,11 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Initialize session state for documents and embeddings
+# Initialize session state for documents and search
 if "documents" not in st.session_state:
     st.session_state.documents = []
-if "embeddings" not in st.session_state:
-    st.session_state.embeddings = None
-if "index" not in st.session_state:
-    st.session_state.index = None
+if "document_keywords" not in st.session_state:
+    st.session_state.document_keywords = []
 if "chunks" not in st.session_state:
     st.session_state.chunks = []
 if "uploaded_files" not in st.session_state:
@@ -326,10 +324,61 @@ def split_text(text, chunk_size=1000, overlap=200):
         start = end - overlap
     return chunks
 
-# Load sentence transformer model
-@st.cache_resource
-def load_embeddings_model():
-    return SentenceTransformer('all-MiniLM-L6-v2')
+# Function to extract keywords from text
+def extract_keywords(text):
+    """Extract important keywords from text for simple matching"""
+    # Convert to lowercase and remove special characters
+    text = re.sub(r'[^\w\s]', ' ', text.lower())
+    words = text.split()
+    
+    # Remove common stop words
+    stop_words = {'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'can', 'this', 'that', 'these', 'those'}
+    keywords = [word for word in words if word not in stop_words and len(word) > 2]
+    
+    return keywords
+
+# Simple TF-IDF-like scoring for keyword search
+def calculate_relevance_score(query_keywords, document_keywords):
+    """Calculate relevance score between query and document keywords"""
+    if not query_keywords or not document_keywords:
+        return 0
+    
+    query_counter = Counter(query_keywords)
+    doc_counter = Counter(document_keywords)
+    
+    score = 0
+    for word, query_freq in query_counter.items():
+        if word in doc_counter:
+            score += query_freq * doc_counter[word]
+    
+    # Normalize by document length
+    if len(document_keywords) > 0:
+        score = score / math.sqrt(len(document_keywords))
+    
+    return score
+
+# Load sentence transformer model - replaced with simple keyword matching
+def simple_keyword_search(query, documents, chunks):
+    """Simple keyword-based search without external dependencies"""
+    query_keywords = extract_keywords(query)
+    
+    # Search through all text
+    all_text = "\n".join(documents)
+    
+    # Find relevant chunks based on keyword overlap
+    chunk_scores = []
+    for i, chunk in enumerate(chunks):
+        chunk_keywords = extract_keywords(chunk)
+        score = calculate_relevance_score(query_keywords, chunk_keywords)
+        chunk_scores.append((score, chunk))
+    
+    # Sort by relevance score
+    chunk_scores.sort(key=lambda x: x[0], reverse=True)
+    
+    # Return top 3 most relevant chunks
+    relevant_chunks = [chunk for score, chunk in chunk_scores[:3] if score > 0]
+    
+    return relevant_chunks if relevant_chunks else [all_text[:1000]]  # Fallback to first 1000 chars
 
 # File uploader section with enhanced styling
 st.markdown("""
@@ -407,26 +456,15 @@ if uploaded_files or resume_text.strip():
         
         # Store documents in session state
         st.session_state.documents.extend(all_texts)
+        st.session_state.chunks.extend(all_chunks)
         
-        # Load embeddings model and create index
-        model = load_embeddings_model()
+        # Extract keywords for simple search
+        all_keywords = []
+        for text in all_texts:
+            keywords = extract_keywords(text)
+            all_keywords.extend(keywords)
         
-        # Create embeddings for all chunks
-        embeddings = model.encode(all_chunks)
-        
-        # Create or update FAISS index
-        if st.session_state.index is None:
-            dimension = embeddings.shape[1]
-            st.session_state.index = faiss.IndexFlatIP(dimension)
-            st.session_state.embeddings = embeddings
-            st.session_state.chunks = all_chunks
-        else:
-            # Add new embeddings to existing index
-            st.session_state.embeddings = np.vstack([st.session_state.embeddings, embeddings])
-            st.session_state.chunks.extend(all_chunks)
-        
-        # Add embeddings to index
-        st.session_state.index.add(embeddings.astype('float32'))
+        st.session_state.document_keywords.extend(all_keywords)
         
         # Beautiful success message
         st.markdown("""
@@ -434,8 +472,8 @@ if uploaded_files or resume_text.strip():
             <div style="display: flex; align-items: center;">
                 <div style="font-size: 2rem; margin-right: 1rem;">✅</div>
                 <div>
-                    <h4 style="color: #81c784; margin: 0;">Resumes processed successfully!</h4>
-                    <p style="color: #a0a0a0; margin: 0.5rem 0 0 0;">Your resumes are now ready for intelligent querying</p>
+                    <h4 style="color: #81c784; margin: 0;">Resume content processed successfully!</h4>
+                    <p style="color: #a0a0a0; margin: 0.5rem 0 0 0;">Your content is now ready for intelligent querying</p>
                 </div>
             </div>
         </div>
@@ -535,11 +573,11 @@ def extract_specific_info(text, query):
     
     return None
 
-# Simple search and answer function using FAISS
+# Simple search and answer function using keyword matching
 def search_and_answer(query):
-    """Search documents and provide precise answers using FAISS"""
-    if st.session_state.index is None or len(st.session_state.documents) == 0:
-        return "Please upload some resume PDFs first."
+    """Search documents and provide precise answers using keyword matching"""
+    if len(st.session_state.documents) == 0:
+        return "Please upload some resume content or paste text first."
     
     query_lower = query.lower()
     
@@ -613,16 +651,9 @@ def search_and_answer(query):
                     if 2 <= len(words) <= 4 and all(word[0].isupper() for word in words if word.isalpha()):
                         return line
     
-    # If no specific pattern matched, do semantic search using FAISS
+    # If no specific pattern matched, do keyword-based search
     try:
-        model = load_embeddings_model()
-        query_embedding = model.encode([query])
-        
-        # Search for similar chunks
-        distances, indices = st.session_state.index.search(query_embedding.astype('float32'), k=3)
-        
-        # Get the most relevant chunks
-        relevant_chunks = [st.session_state.chunks[idx] for idx in indices[0] if idx < len(st.session_state.chunks)]
+        relevant_chunks = simple_keyword_search(query, st.session_state.documents, st.session_state.chunks)
         combined_text = "\n".join(relevant_chunks)
         
         # Return the most relevant short excerpt
@@ -639,10 +670,10 @@ def search_and_answer(query):
     except Exception as e:
         st.error(f"Search error: {str(e)}")
     
-    return "Information not found in the uploaded resumes."
+    return "Information not found in the uploaded content."
 
 # Query interface - check if documents are uploaded
-if st.session_state.index is not None and len(st.session_state.documents) > 0:
+if len(st.session_state.documents) > 0:
     st.markdown("""
     <div class="glass-container">
         <h3 style="color: #64ffda; margin-bottom: 1.5rem; text-align: center;">
