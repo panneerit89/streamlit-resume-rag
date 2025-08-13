@@ -211,13 +211,10 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Main header with ChatGPT-5 inspired design
 # Main header using Streamlit components
-st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
 st.title("🤖 Resume RAG Chatbot")
 st.markdown("### AI-Powered Resume Analysis & Candidate Screening")
-st.markdown('</div>', unsafe_allow_html=True)
-st.markdown("<br>", unsafe_allow_html=True)
+st.write("")
 
 # Simple instructions using Streamlit components
 col1, col2, col3 = st.columns(3)
@@ -352,17 +349,9 @@ def simple_keyword_search(query, documents, chunks):
     
     return relevant_chunks if relevant_chunks else [all_text[:1000]]  # Fallback to first 1000 chars
 
-# File uploader section with enhanced styling
-st.markdown("""
-<div class="glass-container">
-    <h3 style="color: #64ffda; margin-bottom: 1.5rem; text-align: center;">
-    <h3 style="color: #64ffda; margin-bottom: 1.5rem; text-align: center;">
-        <span style="font-size: 2rem;">📁</span> Upload Resume Files
-    </h3>
-    <p style="text-align: center; color: #a0a0a0; margin-bottom: 2rem;">
-        Upload text files with resume content or paste resume text directly
-    </p>
-""", unsafe_allow_html=True)
+# File uploader section
+st.markdown("### 📁 Upload Resume Files")
+st.write("Upload text files with resume content or paste resume text directly")
 
 # Text area for direct input
 resume_text = st.text_area(
@@ -381,8 +370,6 @@ uploaded_files = st.file_uploader(
     label_visibility="collapsed"
 )
 
-st.markdown("</div>", unsafe_allow_html=True)
-
 # Process uploaded files or direct text input
 if uploaded_files or resume_text.strip():
     new_files = []
@@ -397,16 +384,8 @@ if uploaded_files or resume_text.strip():
         if resume_text.strip() and "direct_input" not in st.session_state.uploaded_files:
             st.session_state.uploaded_files.append("direct_input")
         
-        # Beautiful processing indicator
-        st.markdown("""
-        <div style="background: rgba(100, 255, 218, 0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(100, 255, 218, 0.3); margin: 1rem 0;">
-            <div style="display: flex; align-items: center; margin-bottom: 1rem;">
-                <div style="font-size: 2rem; margin-right: 1rem;">⚡</div>
-                <h4 style="color: #64ffda; margin: 0;">Processing resume content...</h4>
-            </div>
-            <div style="color: #a0a0a0;">AI is extracting and indexing candidate information for intelligent search</div>
-        </div>
-        """, unsafe_allow_html=True)
+        # Processing indicator
+        st.info("⚡ Processing resume content... AI is extracting and indexing candidate information for intelligent search")
 
         # Process content
         all_texts = []
@@ -438,18 +417,8 @@ if uploaded_files or resume_text.strip():
         
         st.session_state.document_keywords.extend(all_keywords)
         
-        # Beautiful success message
-        st.markdown("""
-        <div style="background: linear-gradient(90deg, rgba(76, 175, 80, 0.2), rgba(139, 195, 74, 0.2)); padding: 1.5rem; border-radius: 12px; border-left: 4px solid #4caf50; margin: 1rem 0;">
-            <div style="display: flex; align-items: center;">
-                <div style="font-size: 2rem; margin-right: 1rem;">✅</div>
-                <div>
-                    <h4 style="color: #81c784; margin: 0;">Resume content processed successfully!</h4>
-                    <p style="color: #a0a0a0; margin: 0.5rem 0 0 0;">Your content is now ready for intelligent querying</p>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        # Success message
+        st.success("✅ Resume content processed successfully! Your content is now ready for intelligent querying")
 
 # Simple pattern-based answer extraction
 def extract_specific_info(text, query):
@@ -646,31 +615,20 @@ def search_and_answer(query):
 
 # Query interface - check if documents are uploaded
 if len(st.session_state.documents) > 0:
-    st.markdown("""
-    <div class="glass-container">
-        <h3 style="color: #64ffda; margin-bottom: 1.5rem; text-align: center;">
-            <span class="ai-icon">🤖</span> Ask Questions About Candidates
-        </h3>
-        <p style="text-align: center; color: #a0a0a0; margin-bottom: 2rem;">
-            Ask specific questions for precise answers. Be clear about what information you want.
-        </p>
-    """, unsafe_allow_html=True)
+    st.markdown("### 🤖 Ask Questions About Candidates")
+    st.write("Ask specific questions for precise answers. Be clear about what information you want.")
     
     # Add examples of good queries
     with st.expander("💡 Example Questions for Precise Answers", expanded=False):
-        st.markdown("""
-        <div style="background: rgba(100, 255, 218, 0.05); padding: 1rem; border-radius: 8px;">
-            <h4 style="color: #64ffda;">For specific information:</h4>
-            <p style="color: #81c784;">• "What is John's phone number?"</p>
-            <p style="color: #81c784;">• "Give me Sarah's email address"</p>
-            <p style="color: #81c784;">• "List the programming languages mentioned in Mike's resume"</p>
-            
-            <h4 style="color: #64ffda; margin-top: 1.5rem;">For comparisons:</h4>
-            <p style="color: #81c784;">• "Who has the most years of Python experience?"</p>
-            <p style="color: #81c784;">• "Which candidate has machine learning skills?"</p>
-            <p style="color: #81c784;">• "Find candidates with project management experience"</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("**For specific information:**")
+        st.write("• What is John's phone number?")
+        st.write("• Give me Sarah's email address")
+        st.write("• List the programming languages mentioned in Mike's resume")
+        
+        st.markdown("**For comparisons:**")
+        st.write("• Who has the most years of Python experience?")
+        st.write("• Which candidate has machine learning skills?")
+        st.write("• Find candidates with project management experience")
     
     # User query input with enhanced styling
     query = st.text_input(
@@ -691,17 +649,10 @@ if len(st.session_state.documents) > 0:
                     for i, doc in enumerate(st.session_state.documents[:2]):
                         st.code(f"Doc {i+1}: {doc[:200]}...")
                 
-                # Display answer with beautiful styling
+                # Display answer
                 if answer and answer != "Information not found in the uploaded resumes.":
-                    st.markdown(f"""
-                    <div class="chat-response">
-                        <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
-                            <span class="ai-icon">🤖</span>
-                            <span style="margin-left: 0.5rem; color: #64ffda; font-weight: 600;">AI Assistant</span>
-                        </div>
-                        <p style="margin: 0; font-size: 1.1rem; line-height: 1.6;">{answer}</p>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    st.markdown("🤖 **AI Assistant**")
+                    st.write(answer)
                 else:
                     st.warning("🔍 Information not found in the uploaded resumes.")
                     st.info("💡 Try asking for specific information like:\n• Phone number\n• Email address\n• Skills or technologies\n• Years of experience")
