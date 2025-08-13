@@ -239,54 +239,31 @@ with col3:
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.markdown("""
-    <div class="feature-card">
-        <div style="text-align: center; margin-bottom: 1rem;">
-            <div style="font-size: 3rem; color: #64ffda;">📤</div>
-        </div>
-        <h4 style="color: #64ffda; text-align: center;">Upload PDFs</h4>
-        <p style="text-align: center; color: #a0a0a0;">Drag & drop multiple resume PDFs for AI processing</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown("### 📁 Upload Content")
+    st.write("Paste resume text or upload text files")
 
 with col2:
-    st.markdown("""
-    <div class="feature-card">
-        <div style="text-align: center; margin-bottom: 1rem;">
-            <div style="font-size: 3rem; color: #64ffda;">⚡</div>
-        </div>
-        <h4 style="color: #64ffda; text-align: center;">AI Processing</h4>
-        <p style="text-align: center; color: #a0a0a0;">Advanced AI extracts and indexes candidate information</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown("### ⚡ AI Processing")
+    st.write("Smart keyword extraction and indexing")
 
 with col3:
-    st.markdown("""
-    <div class="feature-card">
-        <div style="text-align: center; margin-bottom: 1rem;">
-            <div style="font-size: 3rem; color: #64ffda;">💬</div>
-        </div>
-        <h4 style="color: #64ffda; text-align: center;">Ask Questions</h4>
-        <p style="text-align: center; color: #a0a0a0;">Get instant, intelligent answers about candidates</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown("### 💬 Ask Questions")
+    st.write("Get precise answers about candidates")
 
-# Example queries section
-st.markdown("""
-<div class="info-card">
-    <h3 style="color: #64ffda; margin-bottom: 1rem;">💡 Example Queries</h3>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-        <div>
-            <p style="color: #81c784;">• "Find candidates with Python experience"</p>
-            <p style="color: #81c784;">• "Who has machine learning skills?"</p>
-        </div>
-        <div>
-            <p style="color: #81c784;">• "Show me project management experience"</p>
-            <p style="color: #81c784;">• "List candidates with 5+ years experience"</p>
-        </div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
+# Example queries section using simple Streamlit components
+st.markdown("---")
+st.markdown("### 💡 Example Queries")
+
+col1, col2 = st.columns(2)
+with col1:
+    st.write("• Find candidates with Python experience")
+    st.write("• Who has machine learning skills?")
+    
+with col2:
+    st.write("• Show me project management experience")
+    st.write("• List candidates with 5+ years experience")
+
+st.markdown("---")
 
 # Initialize session state for documents and search
 if "documents" not in st.session_state:
