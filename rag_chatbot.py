@@ -3,12 +3,48 @@ import re
 import numpy as np
 from collections import Counter
 
-# Simple page config
+# Page config with white background
 st.set_page_config(
     page_title="Resume RAG Chatbot",
     page_icon="🤖",
     layout="wide"
 )
+
+# Custom CSS for white background and clean styling
+st.markdown("""
+<style>
+    .stApp {
+        background-color: white;
+    }
+    .main .block-container {
+        background-color: white;
+        padding-top: 2rem;
+    }
+    .stButton > button {
+        background-color: #007ACC;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 0.5rem 1rem;
+    }
+    .stButton > button:hover {
+        background-color: #005A9E;
+    }
+    .instruction-box {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 10px;
+        border-left: 4px solid #007ACC;
+        margin: 1rem 0;
+    }
+    .example-box {
+        background-color: #e8f4fd;
+        padding: 1rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # Initialize session state
 if 'documents' not in st.session_state:
@@ -16,9 +52,22 @@ if 'documents' not in st.session_state:
 if 'document_keywords' not in st.session_state:
     st.session_state.document_keywords = []
 
-# Simple header
-st.title("Resume RAG Chatbot")
-st.write("Upload resume text and ask questions to find specific information")
+# Header
+st.title("🤖 Resume RAG Chatbot")
+st.markdown("**AI-Powered Resume Analysis & Candidate Screening Tool**")
+
+# How to use instructions
+st.markdown("""
+<div class="instruction-box">
+<h3>📋 How to Use This App</h3>
+<ol>
+<li><strong>Upload Multiple Resumes:</strong> Use the file uploader below to upload multiple resume files (TXT format)</li>
+<li><strong>Process Content:</strong> Click the "Process Resumes" button to analyze and index all uploaded content</li>
+<li><strong>Ask Questions:</strong> Use natural language to ask specific questions about candidates</li>
+<li><strong>Get Precise Answers:</strong> The AI will search through all resumes and provide targeted information</li>
+</ol>
+</div>
+""", unsafe_allow_html=True)
 
 # Extract keywords from text
 def extract_keywords(text):
@@ -110,33 +159,27 @@ def search_and_answer(query, documents):
     
     return best_answer if best_answer else "Information not found in the uploaded resumes."
 
-# File upload section
-st.subheader("Upload Resume Files")
+# File upload section - Focus on multiple resumes
+st.markdown("### 📁 Upload Multiple Resume Files")
+st.markdown("Upload text files containing resume content. You can upload multiple files at once for batch analysis.")
+
 uploaded_files = st.file_uploader(
-    "Choose text files", 
+    "Choose resume files (TXT format)", 
     type=['txt'], 
-    accept_multiple_files=True
+    accept_multiple_files=True,
+    help="Select multiple .txt files containing resume content. Each file should contain one complete resume."
 )
 
-# Text input section
-st.subheader("Or Paste Resume Text")
-text_input = st.text_area("Paste resume content here:", height=200)
-
-# Process files and text
-if uploaded_files or text_input:
-    if st.button("Process Content"):
-        with st.spinner("Processing..."):
+# Process files
+if uploaded_files:
+    if st.button("🔄 Process Resumes", type="primary"):
+        with st.spinner("🔍 Processing and analyzing resume content..."):
             all_texts = []
             
             # Process uploaded files
-            if uploaded_files:
-                for file in uploaded_files:
-                    text = str(file.read(), "utf-8")
-                    all_texts.append(text)
-            
-            # Process text input
-            if text_input:
-                all_texts.append(text_input)
+            for file in uploaded_files:
+                text = str(file.read(), "utf-8")
+                all_texts.append(text)
             
             # Store in session state
             st.session_state.documents = all_texts
@@ -148,36 +191,89 @@ if uploaded_files or text_input:
                 all_keywords.extend(keywords)
             st.session_state.document_keywords = all_keywords
             
-            st.success("Content processed successfully!")
+            st.success(f"✅ Successfully processed {len(all_texts)} resume(s)! Ready for questions.")
+            st.info(f"📊 Indexed {len(all_keywords)} keywords from all resumes.")
 
-# Query section
+# Query section with enhanced UI
 if st.session_state.documents:
-    st.subheader("Ask Questions")
+    st.markdown("---")
+    st.markdown("### 💬 Ask Questions About Candidates")
+    st.markdown("Use natural language to ask specific questions about the uploaded resumes.")
     
-    # Example questions
-    with st.expander("Example Questions"):
-        st.write("• What is the phone number?")
-        st.write("• What is the email address?")
-        st.write("• What skills are mentioned?")
-        st.write("• What programming languages are listed?")
+    # Example prompts in a nice box
+    st.markdown("""
+    <div class="example-box">
+    <h4>💡 Example Questions You Can Ask:</h4>
+    <ul>
+        <li><strong>Contact Information:</strong> "What is John's phone number?" or "Give me Sarah's email address"</li>
+        <li><strong>Skills & Technologies:</strong> "Who has Python experience?" or "List candidates with machine learning skills"</li>
+        <li><strong>Experience:</strong> "Who has the most years of experience?" or "Find candidates with 5+ years experience"</li>
+        <li><strong>Education:</strong> "Who has a computer science degree?" or "List candidates with MBA"</li>
+        <li><strong>Comparison:</strong> "Compare the programming skills of all candidates"</li>
+        <li><strong>Specific Roles:</strong> "Who is best suited for a data scientist position?"</li>
+    </ul>
+    </div>
+    """, unsafe_allow_html=True)
     
-    # User input
-    query = st.text_input("Your question:", placeholder="e.g., 'What is the phone number?'")
+    # Main question input
+    col1, col2 = st.columns([4, 1])
     
-    if query:
-        with st.spinner("Searching..."):
+    with col1:
+        query = st.text_input(
+            "🔍 Enter your question:",
+            placeholder="e.g., 'Who has Python and React experience?' or 'What is the email of the candidate with 5+ years experience?'",
+            help="Ask specific questions about candidates. Be as detailed as possible for better results."
+        )
+    
+    with col2:
+        search_button = st.button("🔍 Search", type="primary", use_container_width=True)
+    
+    # Process query
+    if query and (search_button or query):
+        with st.spinner("🔍 Searching through all resumes..."):
             answer = search_and_answer(query, st.session_state.documents)
             
-            st.subheader("Answer:")
-            st.write(answer)
+            # Display results
+            st.markdown("#### 🎯 Answer:")
+            if answer and answer != "Information not found in the uploaded resumes.":
+                st.success(answer)
+            else:
+                st.warning("❌ Information not found in the uploaded resumes.")
+                st.info("💡 Try rephrasing your question or asking for different information.")
             
-            # Show source documents if needed
-            if st.checkbox("Show source documents"):
-                st.subheader("Source Documents:")
-                for i, doc in enumerate(st.session_state.documents):
-                    st.write(f"**Document {i+1}:**")
-                    st.text(doc[:500] + "..." if len(doc) > 500 else doc)
+            # Advanced options
+            with st.expander("🔧 Advanced Options"):
+                show_sources = st.checkbox("Show source documents")
+                if show_sources:
+                    st.markdown("**📄 Source Documents:**")
+                    for i, doc in enumerate(st.session_state.documents):
+                        with st.container():
+                            st.markdown(f"**Resume {i+1}:**")
+                            st.text_area(f"Content {i+1}", doc[:1000] + "..." if len(doc) > 1000 else doc, height=200, key=f"doc_{i}")
+
+else:
+    # Instructions when no documents uploaded
+    st.markdown("---")
+    st.markdown("""
+    <div class="instruction-box">
+    <h3>👆 Start by uploading resume files above</h3>
+    <p>Upload multiple resume files (in TXT format) to begin analyzing candidate information. Once uploaded, you'll be able to ask detailed questions about:</p>
+    <ul>
+        <li>Contact information (phone, email, address)</li>
+        <li>Skills and technologies</li>
+        <li>Work experience and years</li>
+        <li>Education background</li>
+        <li>Specific qualifications</li>
+    </ul>
+    </div>
+    """, unsafe_allow_html=True)
 
 # Footer
-st.write("---")
-st.write("Resume RAG Chatbot - Simple and Functional")
+st.markdown("---")
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.markdown("🤖 **Resume RAG Chatbot**")
+with col2:
+    st.markdown("⚡ **AI-Powered Search**")
+with col3:
+    st.markdown("📄 **Multi-Resume Analysis**")
