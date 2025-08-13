@@ -248,7 +248,6 @@ st.markdown("""
 <h3>📋 How to Use This App</h3>
 <ol>
 <li><strong>Upload Multiple Resumes:</strong> Use the file uploader below to upload multiple resume files (TXT format)</li>
-<li><strong>Process Content:</strong> Click the "Process Resumes" button to analyze and index all uploaded content</li>
 <li><strong>Ask Questions:</strong> Use natural language to ask specific questions about candidates</li>
 <li><strong>Get Precise Answers:</strong> The AI will search through all resumes and provide targeted information</li>
 </ol>
