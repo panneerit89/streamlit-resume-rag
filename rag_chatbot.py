@@ -28,6 +28,20 @@ st.markdown("""
         color: black !important;
     }
     
+    /* File uploader specific text styling */
+    .stFileUploader * {
+        color: black !important;
+    }
+    .stFileUploader label * {
+        color: black !important;
+    }
+    div[data-testid="stFileUploader"] * {
+        color: black !important;
+    }
+    div[data-testid="stFileUploader"] label {
+        color: black !important;
+    }
+    
     /* Button styling */
     .stButton > button {
         background-color: #007ACC;
@@ -54,6 +68,18 @@ st.markdown("""
         border-color: #005A9E;
     }
     .stFileUploader label {
+        color: black !important;
+    }
+    .stFileUploader > label > div {
+        color: black !important;
+    }
+    .stFileUploader span {
+        color: black !important;
+    }
+    .stFileUploader div[data-testid="stFileUploaderDropzone"] {
+        color: black !important;
+    }
+    .stFileUploader div[data-testid="stFileUploaderDropzone"] span {
         color: black !important;
     }
     
