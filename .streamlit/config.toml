@@ -2,14 +2,17 @@
 headless = true
 enableCORS = false
 enableXsrfProtection = false
+maxUploadSize = 200
 
 [browser]
 gatherUsageStats = false
 
 [theme]
-primaryColor = "#FF6B6B"
-backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F0F2F6"
+base = "dark"
+primaryColor = "#64ffda"
+backgroundColor = "#0f0f23"
+secondaryBackgroundColor = "#1a1a2e"
+textColor = "#e5e5e5"
 textColor = "#262730"
 
 [client]
