@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import tempfile
-import PyPDF2
+from pypdf import PdfReader
 from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
@@ -301,15 +301,21 @@ if "embeddings" not in st.session_state:
     st.session_state.embeddings = None
 if "index" not in st.session_state:
     st.session_state.index = None
+if "chunks" not in st.session_state:
+    st.session_state.chunks = []
 if "uploaded_files" not in st.session_state:
     st.session_state.uploaded_files = []
 
 # Function to extract text from PDF
 def extract_text_from_pdf(pdf_file):
     text = ""
-    pdf_reader = PyPDF2.PdfReader(io.BytesIO(pdf_file.read()))
-    for page in pdf_reader.pages:
-        text += page.extract_text() + "\n"
+    try:
+        pdf_reader = PdfReader(pdf_file)
+        for page in pdf_reader.pages:
+            text += page.extract_text() + "\n"
+    except Exception as e:
+        st.error(f"Error reading PDF: {str(e)}")
+        return ""
     return text
 
 # Function to split text into chunks
