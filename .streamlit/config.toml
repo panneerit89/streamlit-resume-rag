@@ -13,7 +13,6 @@ primaryColor = "#64ffda"
 backgroundColor = "#0f0f23"
 secondaryBackgroundColor = "#1a1a2e"
 textColor = "#e5e5e5"
-textColor = "#262730"
 
 [client]
 showErrorDetails = false

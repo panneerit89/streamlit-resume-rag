@@ -1,7 +1,6 @@
 import streamlit as st
 import os
 import tempfile
-from pypdf import PdfReader
 from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
@@ -306,17 +305,15 @@ if "chunks" not in st.session_state:
 if "uploaded_files" not in st.session_state:
     st.session_state.uploaded_files = []
 
-# Function to extract text from PDF
-def extract_text_from_pdf(pdf_file):
-    text = ""
+# Function to extract text from uploaded file
+def extract_text_from_file(uploaded_file):
     try:
-        pdf_reader = PdfReader(pdf_file)
-        for page in pdf_reader.pages:
-            text += page.extract_text() + "\n"
+        # Read text file content
+        text = uploaded_file.read().decode('utf-8')
+        return text
     except Exception as e:
-        st.error(f"Error reading PDF: {str(e)}")
+        st.error(f"Error reading file {uploaded_file.name}: {str(e)}")
         return ""
-    return text
 
 # Function to split text into chunks
 def split_text(text, chunk_size=1000, overlap=200):
@@ -338,53 +335,75 @@ def load_embeddings_model():
 st.markdown("""
 <div class="glass-container">
     <h3 style="color: #64ffda; margin-bottom: 1.5rem; text-align: center;">
+    <h3 style="color: #64ffda; margin-bottom: 1.5rem; text-align: center;">
         <span style="font-size: 2rem;">📁</span> Upload Resume Files
     </h3>
     <p style="text-align: center; color: #a0a0a0; margin-bottom: 2rem;">
-        Drag and drop multiple PDF files or click 'Browse files' to select
+        Upload text files with resume content or paste resume text directly
     </p>
 """, unsafe_allow_html=True)
 
+# Text area for direct input
+resume_text = st.text_area(
+    "Paste resume content here:",
+    height=200,
+    placeholder="Copy and paste resume text here...",
+    help="You can paste the text content of resumes directly here for processing."
+)
+
+# File uploader for text files
 uploaded_files = st.file_uploader(
-    "Choose PDF files", 
-    type="pdf", 
+    "Or upload text files", 
+    type=["txt", "md"], 
     accept_multiple_files=True,
-    help="You can upload multiple resume PDFs at once. Each file will be processed and indexed for searching.",
+    help="You can upload multiple text files containing resume content.",
     label_visibility="collapsed"
 )
 
 st.markdown("</div>", unsafe_allow_html=True)
 
-# Process uploaded PDFs
-if uploaded_files:
-    new_files = [f for f in uploaded_files if f.name not in st.session_state.uploaded_files]
+# Process uploaded files or direct text input
+if uploaded_files or resume_text.strip():
+    new_files = []
+    if uploaded_files:
+        new_files = [f for f in uploaded_files if f.name not in st.session_state.uploaded_files]
     
-    if new_files:
-        st.session_state.uploaded_files.extend([f.name for f in new_files])
+    has_new_content = bool(new_files) or (resume_text.strip() and "direct_input" not in st.session_state.uploaded_files)
+    
+    if has_new_content:
+        if new_files:
+            st.session_state.uploaded_files.extend([f.name for f in new_files])
+        if resume_text.strip() and "direct_input" not in st.session_state.uploaded_files:
+            st.session_state.uploaded_files.append("direct_input")
         
         # Beautiful processing indicator
         st.markdown("""
         <div style="background: rgba(100, 255, 218, 0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(100, 255, 218, 0.3); margin: 1rem 0;">
             <div style="display: flex; align-items: center; margin-bottom: 1rem;">
                 <div style="font-size: 2rem; margin-right: 1rem;">⚡</div>
-                <h4 style="color: #64ffda; margin: 0;">Processing uploaded resumes...</h4>
+                <h4 style="color: #64ffda; margin: 0;">Processing resume content...</h4>
             </div>
             <div style="color: #a0a0a0;">AI is extracting and indexing candidate information for intelligent search</div>
         </div>
         """, unsafe_allow_html=True)
 
-        # Process each PDF
+        # Process content
         all_texts = []
         all_chunks = []
         
-        for uploaded_file in new_files:
-            # Extract text from PDF
-            text = extract_text_from_pdf(uploaded_file)
-            all_texts.append(text)
-            
-            # Split into chunks
-            chunks = split_text(text)
+        # Process direct text input
+        if resume_text.strip():
+            all_texts.append(resume_text.strip())
+            chunks = split_text(resume_text.strip())
             all_chunks.extend(chunks)
+        
+        # Process uploaded files
+        for uploaded_file in new_files:
+            text = extract_text_from_file(uploaded_file)
+            if text:
+                all_texts.append(text)
+                chunks = split_text(text)
+                all_chunks.extend(chunks)
         
         # Store documents in session state
         st.session_state.documents.extend(all_texts)
