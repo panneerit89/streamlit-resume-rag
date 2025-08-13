@@ -44,14 +44,40 @@ st.markdown("""
     
     /* Button styling */
     .stButton > button {
-        background-color: #007ACC;
-        color: white;
-        border: none;
-        border-radius: 5px;
+        background-color: white;
+        color: black;
+        border: 1px solid #ddd;
+        border-radius: 50px;
         padding: 0.5rem 1rem;
     }
     .stButton > button:hover {
-        background-color: #005A9E;
+        background-color: #f8f9fa;
+        border-color: #ccc;
+    }
+    
+    /* File uploader button specific styling */
+    button[data-testid="stBaseButton-secondary"] {
+        background-color: #f8f9fa !important;
+        color: black !important;
+        border: 1px solid #ddd !important;
+        border-radius: 50px !important;
+        padding: 0.5rem 1rem !important;
+    }
+    button[data-testid="stBaseButton-secondary"]:hover {
+        background-color: #e9ecef !important;
+        border-color: #ccc !important;
+    }
+    
+    /* Target the specific emotion cache class */
+    .st-emotion-cache-u3zikf {
+        background-color: #f8f9fa !important;
+        color: black !important;
+        border: 1px solid #ddd !important;
+        border-radius: 50px !important;
+    }
+    .st-emotion-cache-u3zikf:hover {
+        background-color: #e9ecef !important;
+        border-color: #ccc !important;
     }
     
     /* File uploader styling - white theme */
@@ -102,6 +128,22 @@ st.markdown("""
     /* Remove any dark backgrounds */
     .stFileUploader div {
         background-color: #f8f9fa !important;
+    }
+    
+    /* More specific targeting for the dropzone */
+    section[data-testid="stFileUploaderDropzone"] {
+        background-color: #f8f9fa !important;
+        border: 2px dashed #007ACC !important;
+        border-radius: 10px !important;
+        color: black !important;
+    }
+    
+    /* Target the emotion cache class specifically */
+    .st-emotion-cache-mcvmo3 {
+        background-color: #f8f9fa !important;
+        border: 2px dashed #007ACC !important;
+        border-radius: 10px !important;
+        color: black !important;
     }
     
     /* Input field styling */
