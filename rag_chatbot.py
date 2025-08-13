@@ -56,16 +56,16 @@ st.markdown("""
     
     /* File uploader styling - white theme */
     .stFileUploader > div {
-        background-color: #f8f9fa;
-        border: 2px dashed #007ACC;
+        background-color: #f8f9fa !important;
+        border: 2px dashed #007ACC !important;
         border-radius: 10px;
         padding: 2rem;
         text-align: center;
-        color: black;
+        color: black !important;
     }
     .stFileUploader > div:hover {
-        background-color: #e8f4fd;
-        border-color: #005A9E;
+        background-color: #e8f4fd !important;
+        border-color: #005A9E !important;
     }
     .stFileUploader label {
         color: black !important;
@@ -77,10 +77,31 @@ st.markdown("""
         color: black !important;
     }
     .stFileUploader div[data-testid="stFileUploaderDropzone"] {
+        background-color: #f8f9fa !important;
         color: black !important;
+        border: 2px dashed #007ACC !important;
     }
     .stFileUploader div[data-testid="stFileUploaderDropzone"] span {
         color: black !important;
+    }
+    
+    /* Target the actual dropzone area */
+    div[data-testid="stFileUploaderDropzone"] {
+        background-color: #f8f9fa !important;
+        border: 2px dashed #007ACC !important;
+        border-radius: 10px !important;
+        color: black !important;
+    }
+    
+    /* Target all file uploader text */
+    div[data-testid="stFileUploaderDropzone"] div {
+        color: black !important;
+        background-color: transparent !important;
+    }
+    
+    /* Remove any dark backgrounds */
+    .stFileUploader div {
+        background-color: #f8f9fa !important;
     }
     
     /* Input field styling */
