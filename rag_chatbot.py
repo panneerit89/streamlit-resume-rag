@@ -2,6 +2,9 @@ import streamlit as st
 import re
 import numpy as np
 from collections import Counter
+import PyPDF2
+from docx import Document
+import io
 
 # Page config with white background
 st.set_page_config(
@@ -247,12 +250,51 @@ st.markdown("""
 <div class="instruction-box">
 <h3>📋 How to Use This App</h3>
 <ol>
-<li><strong>Upload Multiple Resumes:</strong> Use the file uploader below to upload multiple resume files (TXT format)</li>
+<li><strong>Upload Multiple Resumes:</strong> Use the file uploader below to upload multiple resume files (TXT, PDF, or Word format)</li>
 <li><strong>Ask Questions:</strong> Use natural language to ask specific questions about candidates</li>
 <li><strong>Get Precise Answers:</strong> The AI will search through all resumes and provide targeted information</li>
 </ol>
 </div>
 """, unsafe_allow_html=True)
+
+# Document processing functions
+def extract_text_from_pdf(file):
+    """Extract text from PDF file"""
+    try:
+        pdf_reader = PyPDF2.PdfReader(io.BytesIO(file.read()))
+        text = ""
+        for page in pdf_reader.pages:
+            text += page.extract_text() + "\n"
+        return text
+    except Exception as e:
+        st.error(f"Error reading PDF file {file.name}: {str(e)}")
+        return ""
+
+def extract_text_from_docx(file):
+    """Extract text from Word document"""
+    try:
+        doc = Document(io.BytesIO(file.read()))
+        text = ""
+        for paragraph in doc.paragraphs:
+            text += paragraph.text + "\n"
+        return text
+    except Exception as e:
+        st.error(f"Error reading Word file {file.name}: {str(e)}")
+        return ""
+
+def extract_text_from_file(file):
+    """Extract text from various file types"""
+    file_extension = file.name.lower().split('.')[-1]
+    
+    if file_extension == 'txt':
+        return str(file.read(), "utf-8")
+    elif file_extension == 'pdf':
+        return extract_text_from_pdf(file)
+    elif file_extension in ['docx', 'doc']:
+        return extract_text_from_docx(file)
+    else:
+        st.error(f"Unsupported file type: {file_extension}")
+        return ""
 
 # Extract keywords from text
 def extract_keywords(text):
@@ -349,10 +391,10 @@ st.markdown("### 📁 Upload Multiple Resume Files")
 st.markdown("Upload text files containing resume content. You can upload multiple files at once for batch analysis.")
 
 uploaded_files = st.file_uploader(
-    "Choose resume files (TXT format)", 
-    type=['txt'], 
+    "Choose resume files (TXT, PDF, or Word format)", 
+    type=['txt', 'pdf', 'docx', 'doc'], 
     accept_multiple_files=True,
-    help="Select multiple .txt files containing resume content. Each file should contain one complete resume."
+    help="Select multiple files containing resume content. Supported formats: .txt, .pdf, .docx, .doc"
 )
 
 # Process files
@@ -363,8 +405,11 @@ if uploaded_files:
             
             # Process uploaded files
             for file in uploaded_files:
-                text = str(file.read(), "utf-8")
-                all_texts.append(text)
+                text = extract_text_from_file(file)
+                if text.strip():  # Only add non-empty text
+                    all_texts.append(text)
+                else:
+                    st.warning(f"No text extracted from {file.name}")
             
             # Store in session state
             st.session_state.documents = all_texts
