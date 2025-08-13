@@ -1,29 +1,32 @@
-# 🤖 Resume RAG Chatbot (PWA)
+# 🤖 Resume RAG Chatbot
 
-A Progressive Web App (PWA) built with Streamlit for AI-powered resume analysis and candidate screening. Features a ChatGPT-5 inspired interface with offline capabilities.
+An AI-powered resume analysis and candidate screening application built with Streamlit. Features a ChatGPT-5 inspired interface with intelligent text processing capabilities.
 
 ## ✨ Features
 
 ### 🎯 Core Functionality
-- **📤 Upload multiple PDF resumes** with drag & drop interface
-- **🔍 AI-powered search** using ChromaDB vector store
+- **� Text input support** - Paste resume content directly or upload text files
+- **🔍 Smart keyword search** with relevance scoring
 - **💬 Natural language queries** with precise pattern-matching answers
-- **📱 Progressive Web App** - installable on mobile and desktop
-- **🌐 Offline support** with service worker caching
+- **📱 Responsive design** - Works perfectly on all devices
+- **⚡ Fast processing** with optimized search algorithms
 
 ### 🎨 Modern Interface
 - **ChatGPT-5 inspired design** with dark theme
 - **Glassmorphism effects** and smooth animations
-- **Responsive layout** optimized for all devices
-- **Fast loading** with optimized search algorithms
+- **Clean, professional layout** optimized for productivity
+- **Intuitive user experience** with helpful examples
 
 ### 🔍 Smart Search Capabilities
 - Extract contact information (phone, email)
 - Identify technical skills and programming languages
 - Find experience levels and years of work
-- Compare candidates across multiple criteria
+- Search for specific qualifications and keywords
 
 ## 🚀 Quick Start
+
+### 🌐 Online Access
+**Live Demo**: [https://resume-filter-chatbot.streamlit.app/](https://resume-filter-chatbot.streamlit.app/)
 
 ### Local Development
 ```bash
@@ -32,72 +35,103 @@ git clone https://github.com/panneerit89/streamlit-resume-rag.git
 cd streamlit-resume-rag
 
 # Install dependencies
-pip install -r requirements-python.txt
+pip install -r requirements.txt
 
 # Run the application
 streamlit run rag_chatbot.py
 ```
 
-### 🌐 Netlify Deployment
+### 🚀 Deploy Your Own
 
-#### Option 1: Direct GitHub Integration
-1. **Fork/Clone** this repository to your GitHub account
-2. **Connect to Netlify**:
-   - Go to [Netlify](https://netlify.com) → New site from Git
-   - Connect your GitHub repository
-   - Build settings are automatically configured via `netlify.toml`
+#### Streamlit Cloud Deployment (Recommended)
+1. **Fork** this repository to your GitHub account
+2. **Go to** [share.streamlit.io](https://share.streamlit.io)
+3. **Sign in** with your GitHub account
+4. **Click** "New app"
+5. **Repository**: `your-username/streamlit-resume-rag`
+6. **Main file path**: `rag_chatbot.py`
+7. **Click** "Deploy!"
+## 📖 How to Use
 
-#### Option 2: Manual Deployment
-1. **Build command**: `python deploy.py`
-2. **Publish directory**: `.`
-3. **Runtime**: Python 3.9 (specified in `runtime.txt`)
+1. **Access the app** at [resume-filter-chatbot.streamlit.app](https://resume-filter-chatbot.streamlit.app/)
 
-### ⚙️ Environment Configuration
+2. **Upload content** using one of these methods:
+   - **Paste text**: Copy resume content directly into the text area
+   - **Upload files**: Upload .txt or .md files containing resume text
 
-The app automatically configures itself for deployment with:
-- **Streamlit config** optimized for production
-- **PWA manifest** for mobile installation
-- **Service worker** for offline functionality
-- **Netlify redirects** for SPA routing
+3. **Ask questions** about the candidates:
+   - "What is the phone number?"
+   - "What skills are mentioned?"
+   - "How many years of experience?"
+   - "What is the email address?"
 
-## Usage
+## 🎯 Example Queries
 
-1. Run the Streamlit application:
-   ```bash
-   streamlit run rag_chatbot.py
-   ```
+### Contact Information
+- "What is the phone number?"
+- "Show me the email address"
+- "Find contact details"
 
-2. Upload PDF resumes using the file uploader
-3. Ask specific questions about candidates for precise answers
+### Skills & Experience
+- "What programming languages are mentioned?"
+- "List the technical skills"
+- "How many years of Python experience?"
+- "What technologies does the candidate know?"
 
-## Key Improvements
+### General Information
+- "What is the candidate's name?"
+- "Find project management experience"
+- "Show me the work history"
 
-- **Accurate Responses**: Pattern-based extraction eliminates hallucinations
-- **Precise Answers**: Direct information extraction without AI generation
-- **Fast Performance**: No heavy LLM models, instant responses
-- **Reliable Results**: Regex patterns for contact info, skills, and experience
+## 🛠️ Technical Details
 
-## Dependencies
+### Dependencies
+```
+streamlit        # Web application framework
+numpy           # Numerical computations
+pandas          # Data manipulation
+requests        # HTTP requests
+```
 
-- Streamlit - Web application framework
-- LangChain - Framework for document processing
-- ChromaDB - Vector similarity search and storage
-- HuggingFace - Embeddings for semantic search
-- PyPDF2/pypdf - PDF processing
+### Architecture
+The application uses a lightweight, dependency-free approach:
+- **Text Processing**: Pure Python regex and string operations
+- **Keyword Extraction**: Custom algorithm with stop word removal
+- **Search Strategy**: TF-IDF-like relevance scoring
+- **Pattern Matching**: Regex patterns for precise information extraction
+- **No ML Dependencies**: Fast, reliable processing without heavy libraries
 
-## Architecture
+### Key Features
+- **Zero ML Dependencies**: No complex machine learning libraries
+- **Fast Performance**: Instant responses with simple algorithms
+- **Reliable Results**: Regex patterns ensure accurate extraction
+- **Lightweight**: Minimal dependencies for quick deployment
 
-The application uses:
-- **Document Loading**: PyPDFLoader for PDF processing
-- **Text Splitting**: RecursiveCharacterTextSplitter for chunking
-- **Embeddings**: HuggingFace sentence-transformers/all-MiniLM-L6-v2
-- **Vector Store**: ChromaDB for similarity search and persistence
-- **Information Extraction**: Pattern-based regex matching for precise answers
-- **Search Strategy**: Semantic similarity + pattern recognition
+## 🤝 Contributing
 
-## Supported Query Types
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature-name`
+3. Make your changes and commit: `git commit -m 'Add feature'`
+4. Push to the branch: `git push origin feature-name`
+5. Submit a pull request
 
-- **Contact Information**: Phone numbers, email addresses
-- **Skills & Technologies**: Programming languages, frameworks
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🚀 Deployment Status
+
+- **Live Demo**: [https://resume-filter-chatbot.streamlit.app/](https://resume-filter-chatbot.streamlit.app/)
+- **Platform**: Streamlit Cloud
+- **Repository**: [GitHub](https://github.com/panneerit89/streamlit-resume-rag)
+- **Status**: ✅ Active
+
+## 📞 Support
+
+For questions or support, please open an issue on GitHub or contact the maintainer.
+
+---
+
+**Built with ❤️ using Streamlit and Python**
 - **Experience**: Years of experience, work history
 - **General Information**: Education, certifications, projects

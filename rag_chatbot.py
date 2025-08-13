@@ -24,31 +24,10 @@ st.markdown("""
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Resume RAG">
     <meta name="description" content="AI-powered resume analysis and candidate screening chatbot">
-    <meta name="keywords" content="resume, AI, chatbot, recruitment, screening">
-    
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="./manifest.json">
-    
-    <!-- Apple Touch Icons -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIyNCIgZmlsbD0idXJsKCNncmFkaWVudDApIi8+PHBhdGggZD0iTTk2IDQ4Qzc0LjQgNDggNTYgNjYuNCA1NiA4OFYxMjhDNTYgMTM2LjggNjMuMiAxNDQgNzIgMTQ0SDEyMEMxMjguOCAxNDQgMTM2IDEzNi44IDEzNiAxMjhWODhDMTM2IDY2LjQgMTE3LjYgNDggOTYgNDhaIiBmaWxsPSIjNjRmZmRhIi8+PC9zdmc+">
-    
-    <!-- Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('./sw.js')
-                .then(function(registration) {
-                    console.log('ServiceWorker registration successful');
-                }, function(err) {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
-            });
-        }
-    </script>
 </head>
 """, unsafe_allow_html=True)
 
-# Custom CSS for ChatGPT-5 inspired desi        <div style="font-size: 4rem; margin-bottom: 1rem;">🚀</div>n
+# Custom CSS for ChatGPT-5 inspired design
 st.markdown("""
 <style>
     /* Main background - ChatGPT-5 dark theme */
@@ -234,10 +213,28 @@ st.markdown("""
 
 # Main header with ChatGPT-5 inspired design
 st.markdown("""
+# Main header with ChatGPT-5 inspired design
+st.markdown("""
 <div style="text-align: center; margin-bottom: 3rem;">
     <h1 class="main-title">🤖 Resume RAG Chatbot</h1>
-    <p class="subtitle">Powered by AI • Upload resumes and ask intelligent questions about candidates</p>
+    <p class="subtitle">AI-Powered Resume Analysis & Candidate Screening</p>
 </div>
+""", unsafe_allow_html=True)
+
+# Simple instructions using Streamlit components
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.markdown("### 📁 Upload Content")
+    st.write("Paste resume text or upload text files")
+
+with col2:
+    st.markdown("### ⚡ AI Processing")
+    st.write("Smart keyword extraction and indexing")
+
+with col3:
+    st.markdown("### 💬 Ask Questions")
+    st.write("Get precise answers about candidates")
 """, unsafe_allow_html=True)
 
 # Beautiful feature cards for instructions
