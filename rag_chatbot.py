@@ -380,6 +380,81 @@ if uploaded_files:
             st.success(f"✅ Successfully processed {len(all_texts)} resume(s)! Ready for questions.")
             st.info(f"📊 Indexed {len(all_keywords)} keywords from all resumes.")
 
+# Question Input Section
+st.markdown("---")
+st.markdown("### 💬 Ask Questions About the Resumes")
+
+# Create a styled input box for questions
+st.markdown("""
+<div class="instruction-box">
+<h4>🔍 Ask Your Questions</h4>
+<p>Enter your questions about the uploaded resumes below. Be specific for better results!</p>
+</div>
+""", unsafe_allow_html=True)
+
+# Question input with better styling
+user_question = st.text_area(
+    "Enter your question here:",
+    placeholder="e.g., 'Which candidates have Python experience?' or 'Who has more than 5 years of experience?'",
+    height=120,
+    help="Ask specific questions about skills, experience, education, or any other details from the resumes."
+)
+
+# Search button
+col1, col2, col3 = st.columns([1, 2, 1])
+with col2:
+    search_button = st.button("🔍 Search & Analyze", type="primary", use_container_width=True)
+
+# Process the question
+if user_question and search_button and st.session_state.documents:
+    with st.spinner("🤖 Analyzing resumes and processing your question..."):
+        answer = search_and_answer(user_question, st.session_state.documents)
+        
+        # Display results
+        st.markdown("#### 🎯 Search Results:")
+        if answer and answer != "Information not found in the uploaded resumes.":
+            st.success(f"**Answer:** {answer}")
+            
+            # Show additional info
+            with st.expander("📊 Analysis Details"):
+                st.info(f"**Question:** {user_question}")
+                st.info(f"**Documents searched:** {len(st.session_state.documents)} resume(s)")
+                st.info(f"**Keywords available:** {len(st.session_state.document_keywords)} terms")
+        else:
+            st.warning("❌ No relevant information found for your question.")
+            st.markdown("""
+            **💡 Tips for better results:**
+            - Be more specific about skills or requirements
+            - Try different keywords or phrases
+            - Ask about concrete experience or qualifications
+            """)
+
+elif user_question and search_button and not st.session_state.documents:
+    st.error("⚠️ Please upload and process resume files first before asking questions!")
+
+# Example questions section
+with st.expander("💡 Example Questions You Can Ask"):
+    st.markdown("""
+    **👨‍💻 Skills & Technology:**
+    - "Which candidates have Python programming experience?"
+    - "Who has worked with machine learning or AI?"
+    - "List candidates with React or JavaScript skills"
+    
+    **📈 Experience & Background:**
+    - "Who has more than 5 years of experience?"
+    - "Which candidates have startup experience?"
+    - "Who has managed teams or led projects?"
+    
+    **🎓 Education & Certifications:**
+    - "Which candidates have computer science degrees?"
+    - "Who has relevant certifications?"
+    - "List applicants with advanced degrees"
+    
+    **📞 Contact Information:**
+    - "What is John's email address?"
+    - "Find contact details for experienced developers"
+    """)
+
 # Query section with enhanced UI
 if st.session_state.documents:
     st.markdown("---")
