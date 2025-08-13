@@ -1,13 +1,12 @@
 import streamlit as st
 import os
 import tempfile
-from langchain_community.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain.chains import RetrievalQA
-from langchain.prompts import PromptTemplate
+import PyPDF2
+from sentence_transformers import SentenceTransformer
+import faiss
+import numpy as np
 import re
+import io
 
 # ChatGPT-5 inspired styling with dark theme + PWA support
 st.set_page_config(
@@ -295,11 +294,39 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Initialize session state for vector store and uploaded files
-if "vectorstore" not in st.session_state:
-    st.session_state.vectorstore = None
+# Initialize session state for documents and embeddings
+if "documents" not in st.session_state:
+    st.session_state.documents = []
+if "embeddings" not in st.session_state:
+    st.session_state.embeddings = None
+if "index" not in st.session_state:
+    st.session_state.index = None
 if "uploaded_files" not in st.session_state:
     st.session_state.uploaded_files = []
+
+# Function to extract text from PDF
+def extract_text_from_pdf(pdf_file):
+    text = ""
+    pdf_reader = PyPDF2.PdfReader(io.BytesIO(pdf_file.read()))
+    for page in pdf_reader.pages:
+        text += page.extract_text() + "\n"
+    return text
+
+# Function to split text into chunks
+def split_text(text, chunk_size=1000, overlap=200):
+    chunks = []
+    start = 0
+    while start < len(text):
+        end = start + chunk_size
+        chunk = text[start:end]
+        chunks.append(chunk)
+        start = end - overlap
+    return chunks
+
+# Load sentence transformer model
+@st.cache_resource
+def load_embeddings_model():
+    return SentenceTransformer('all-MiniLM-L6-v2')
 
 # File uploader section with enhanced styling
 st.markdown("""
@@ -324,67 +351,70 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # Process uploaded PDFs
 if uploaded_files:
-    # Create a temporary directory to store PDFs
-    with tempfile.TemporaryDirectory() as temp_dir:
-        documents = []
-        new_files = [f for f in uploaded_files if f.name not in st.session_state.uploaded_files]
+    new_files = [f for f in uploaded_files if f.name not in st.session_state.uploaded_files]
+    
+    if new_files:
+        st.session_state.uploaded_files.extend([f.name for f in new_files])
         
-        if new_files:
-            st.session_state.uploaded_files.extend([f.name for f in new_files])
-            
-            # Beautiful processing indicator
-            st.markdown("""
-            <div style="background: rgba(100, 255, 218, 0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(100, 255, 218, 0.3); margin: 1rem 0;">
-                <div style="display: flex; align-items: center; margin-bottom: 1rem;">
-                    <div style="font-size: 2rem; margin-right: 1rem;">⚡</div>
-                    <h4 style="color: #64ffda; margin: 0;">Processing uploaded resumes...</h4>
-                </div>
-                <div style="color: #a0a0a0;">AI is extracting and indexing candidate information for intelligent search</div>
+        # Beautiful processing indicator
+        st.markdown("""
+        <div style="background: rgba(100, 255, 218, 0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(100, 255, 218, 0.3); margin: 1rem 0;">
+            <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                <div style="font-size: 2rem; margin-right: 1rem;">⚡</div>
+                <h4 style="color: #64ffda; margin: 0;">Processing uploaded resumes...</h4>
             </div>
-            """, unsafe_allow_html=True)
+            <div style="color: #a0a0a0;">AI is extracting and indexing candidate information for intelligent search</div>
+        </div>
+        """, unsafe_allow_html=True)
 
-            # Save and process each PDF
-            for uploaded_file in new_files:
-                file_path = os.path.join(temp_dir, uploaded_file.name)
-                with open(file_path, "wb") as f:
-                    f.write(uploaded_file.getbuffer())
-                
-                # Load and split PDF
-                loader = PyPDFLoader(file_path)
-                docs = loader.load()
-                text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-                split_docs = text_splitter.split_documents(docs)
-                documents.extend(split_docs)
-
-            # Create embeddings and vector store (cached for better performance)
-            @st.cache_resource
-            def load_embeddings():
-                return HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+        # Process each PDF
+        all_texts = []
+        all_chunks = []
+        
+        for uploaded_file in new_files:
+            # Extract text from PDF
+            text = extract_text_from_pdf(uploaded_file)
+            all_texts.append(text)
             
-            embeddings = load_embeddings()
-            if st.session_state.vectorstore is None:
-                # Create a temporary directory for ChromaDB persistence
-                persist_directory = tempfile.mkdtemp()
-                st.session_state.vectorstore = Chroma.from_documents(
-                    documents, 
-                    embeddings,
-                    persist_directory=persist_directory
-                )
-            else:
-                st.session_state.vectorstore.add_documents(documents)
-            
-            # Beautiful success message
-            st.markdown("""
-            <div style="background: linear-gradient(90deg, rgba(76, 175, 80, 0.2), rgba(139, 195, 74, 0.2)); padding: 1.5rem; border-radius: 12px; border-left: 4px solid #4caf50; margin: 1rem 0;">
-                <div style="display: flex; align-items: center;">
-                    <div style="font-size: 2rem; margin-right: 1rem;">✅</div>
-                    <div>
-                        <h4 style="color: #81c784; margin: 0;">Resumes processed successfully!</h4>
-                        <p style="color: #a0a0a0; margin: 0.5rem 0 0 0;">Your resumes are now ready for intelligent querying</p>
-                    </div>
+            # Split into chunks
+            chunks = split_text(text)
+            all_chunks.extend(chunks)
+        
+        # Store documents in session state
+        st.session_state.documents.extend(all_texts)
+        
+        # Load embeddings model and create index
+        model = load_embeddings_model()
+        
+        # Create embeddings for all chunks
+        embeddings = model.encode(all_chunks)
+        
+        # Create or update FAISS index
+        if st.session_state.index is None:
+            dimension = embeddings.shape[1]
+            st.session_state.index = faiss.IndexFlatIP(dimension)
+            st.session_state.embeddings = embeddings
+            st.session_state.chunks = all_chunks
+        else:
+            # Add new embeddings to existing index
+            st.session_state.embeddings = np.vstack([st.session_state.embeddings, embeddings])
+            st.session_state.chunks.extend(all_chunks)
+        
+        # Add embeddings to index
+        st.session_state.index.add(embeddings.astype('float32'))
+        
+        # Beautiful success message
+        st.markdown("""
+        <div style="background: linear-gradient(90deg, rgba(76, 175, 80, 0.2), rgba(139, 195, 74, 0.2)); padding: 1.5rem; border-radius: 12px; border-left: 4px solid #4caf50; margin: 1rem 0;">
+            <div style="display: flex; align-items: center;">
+                <div style="font-size: 2rem; margin-right: 1rem;">✅</div>
+                <div>
+                    <h4 style="color: #81c784; margin: 0;">Resumes processed successfully!</h4>
+                    <p style="color: #a0a0a0; margin: 0.5rem 0 0 0;">Your resumes are now ready for intelligent querying</p>
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+        </div>
+        """, unsafe_allow_html=True)
 
 # Simple pattern-based answer extraction
 def extract_specific_info(text, query):
@@ -480,19 +510,16 @@ def extract_specific_info(text, query):
     
     return None
 
-# Simple search and answer function
-def search_and_answer(vectorstore, query):
-    """Search documents and provide precise answers"""
+# Simple search and answer function using FAISS
+def search_and_answer(query):
+    """Search documents and provide precise answers using FAISS"""
+    if st.session_state.index is None or len(st.session_state.documents) == 0:
+        return "Please upload some resume PDFs first."
+    
     query_lower = query.lower()
     
-    # First, get all documents to have complete context
-    all_docs = vectorstore.get()  # Get all documents
-    if 'documents' in all_docs:
-        all_text = "\n".join(all_docs['documents'])
-    else:
-        # Fallback to similarity search
-        docs = vectorstore.similarity_search(query, k=10)  # Get more documents
-        all_text = "\n".join([doc.page_content for doc in docs])
+    # Get all text from documents
+    all_text = "\n".join(st.session_state.documents)
     
     # For contact info queries, be very specific
     if any(keyword in query_lower for keyword in ['phone', 'number', 'contact', 'telephone', 'mobile']):
@@ -549,37 +576,48 @@ def search_and_answer(vectorstore, query):
     
     # For name queries
     if any(keyword in query_lower for keyword in ['name', 'candidate', 'who']):
-        # Look for names at the beginning of the document (typical resume format)
-        lines = all_text.split('\n')[:5]  # Check first 5 lines
-        for line in lines:
-            line = line.strip()
-            # Skip common headers and look for actual names
-            if line and not any(skip in line.lower() for skip in ['resume', 'cv', 'curriculum']):
-                # Check if it looks like a name (2-4 words, capitalized)
-                words = line.split()
-                if 2 <= len(words) <= 4 and all(word[0].isupper() for word in words if word.isalpha()):
-                    return line
+        # Look for names at the beginning of documents
+        for doc in st.session_state.documents:
+            lines = doc.split('\n')[:5]  # Check first 5 lines
+            for line in lines:
+                line = line.strip()
+                # Skip common headers and look for actual names
+                if line and not any(skip in line.lower() for skip in ['resume', 'cv', 'curriculum']):
+                    # Check if it looks like a name (2-4 words, capitalized)
+                    words = line.split()
+                    if 2 <= len(words) <= 4 and all(word[0].isupper() for word in words if word.isalpha()):
+                        return line
     
-    # If no specific pattern matched, do semantic search
-    docs = vectorstore.similarity_search(query, k=3)
-    combined_text = "\n".join([doc.page_content for doc in docs])
-    
-    # Return the most relevant short excerpt
-    sentences = re.split(r'[.!?]+', combined_text)
-    query_words = set(word.lower() for word in query.split() if len(word) > 2)
-    
-    for sentence in sentences:
-        sentence = sentence.strip()
-        if len(sentence) > 10:  # Skip very short sentences
-            sentence_lower = sentence.lower()
-            # Check if sentence contains query words
-            if any(word in sentence_lower for word in query_words):
-                return sentence
+    # If no specific pattern matched, do semantic search using FAISS
+    try:
+        model = load_embeddings_model()
+        query_embedding = model.encode([query])
+        
+        # Search for similar chunks
+        distances, indices = st.session_state.index.search(query_embedding.astype('float32'), k=3)
+        
+        # Get the most relevant chunks
+        relevant_chunks = [st.session_state.chunks[idx] for idx in indices[0] if idx < len(st.session_state.chunks)]
+        combined_text = "\n".join(relevant_chunks)
+        
+        # Return the most relevant short excerpt
+        sentences = re.split(r'[.!?]+', combined_text)
+        query_words = set(word.lower() for word in query.split() if len(word) > 2)
+        
+        for sentence in sentences:
+            sentence = sentence.strip()
+            if len(sentence) > 10:  # Skip very short sentences
+                sentence_lower = sentence.lower()
+                # Check if sentence contains query words
+                if any(word in sentence_lower for word in query_words):
+                    return sentence
+    except Exception as e:
+        st.error(f"Search error: {str(e)}")
     
     return "Information not found in the uploaded resumes."
 
-# Query interface - only load LLM when needed
-if st.session_state.vectorstore:
+# Query interface - check if documents are uploaded
+if st.session_state.index is not None and len(st.session_state.documents) > 0:
     st.markdown("""
     <div class="glass-container">
         <h3 style="color: #64ffda; margin-bottom: 1.5rem; text-align: center;">
@@ -616,15 +654,14 @@ if st.session_state.vectorstore:
     if query:
         with st.spinner("🔍 Searching for relevant candidate information..."):
             try:
-                # Use the new pattern-based search approach
-                answer = search_and_answer(st.session_state.vectorstore, query)
+                # Use the new FAISS-based search approach
+                answer = search_and_answer(query)
                 
                 # Show debug info in development
                 if st.checkbox("🔧 Show debug info", value=False):
-                    docs = st.session_state.vectorstore.similarity_search(query, k=5)
-                    st.markdown("**Debug - Retrieved Documents:**")
-                    for i, doc in enumerate(docs):
-                        st.code(f"Doc {i+1}: {doc.page_content[:200]}...")
+                    st.markdown("**Debug - Uploaded Documents:**")
+                    for i, doc in enumerate(st.session_state.documents[:2]):
+                        st.code(f"Doc {i+1}: {doc[:200]}...")
                 
                 # Display answer with beautiful styling
                 if answer and answer != "Information not found in the uploaded resumes.":
