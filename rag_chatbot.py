@@ -15,11 +15,20 @@ st.markdown("""
 <style>
     .stApp {
         background-color: white;
+        color: black;
     }
     .main .block-container {
         background-color: white;
         padding-top: 2rem;
+        color: black;
     }
+    
+    /* Make all text black and visible */
+    .stMarkdown, .stText, .stCaption, .stWrite, h1, h2, h3, h4, h5, h6, p, span, div {
+        color: black !important;
+    }
+    
+    /* Button styling */
     .stButton > button {
         background-color: #007ACC;
         color: white;
@@ -30,18 +39,106 @@ st.markdown("""
     .stButton > button:hover {
         background-color: #005A9E;
     }
+    
+    /* File uploader styling - white theme */
+    .stFileUploader > div {
+        background-color: #f8f9fa;
+        border: 2px dashed #007ACC;
+        border-radius: 10px;
+        padding: 2rem;
+        text-align: center;
+        color: black;
+    }
+    .stFileUploader > div:hover {
+        background-color: #e8f4fd;
+        border-color: #005A9E;
+    }
+    .stFileUploader label {
+        color: black !important;
+    }
+    
+    /* Input field styling */
+    .stTextInput > div > div > input {
+        background-color: white;
+        border: 1px solid #007ACC;
+        border-radius: 5px;
+        color: black;
+        padding: 0.5rem;
+    }
+    .stTextInput > div > div > input:focus {
+        border-color: #005A9E;
+        box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
+    }
+    
+    /* Text area styling */
+    .stTextArea > div > div > textarea {
+        background-color: white;
+        border: 1px solid #007ACC;
+        border-radius: 5px;
+        color: black;
+        padding: 0.5rem;
+    }
+    
+    /* Success/Info/Warning styling */
+    .stSuccess {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+    }
+    .stInfo {
+        background-color: #d1ecf1;
+        border: 1px solid #bee5eb;
+        color: #0c5460;
+    }
+    .stWarning {
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+    }
+    
+    /* Expander styling */
+    .streamlit-expanderHeader {
+        background-color: #f8f9fa;
+        color: black !important;
+    }
+    .streamlit-expanderContent {
+        background-color: white;
+        color: black !important;
+    }
+    
+    /* Instruction and example boxes */
     .instruction-box {
         background-color: #f8f9fa;
         padding: 1.5rem;
         border-radius: 10px;
         border-left: 4px solid #007ACC;
         margin: 1rem 0;
+        color: black !important;
     }
+    .instruction-box h3, .instruction-box p, .instruction-box li {
+        color: black !important;
+    }
+    
     .example-box {
         background-color: #e8f4fd;
         padding: 1rem;
         border-radius: 8px;
         margin: 1rem 0;
+        color: black !important;
+    }
+    .example-box h4, .example-box p, .example-box li {
+        color: black !important;
+    }
+    
+    /* Sidebar styling */
+    .css-1d391kg {
+        background-color: #f8f9fa;
+        color: black;
+    }
+    
+    /* Column styling */
+    .css-1kyxreq {
+        color: black !important;
     }
 </style>
 """, unsafe_allow_html=True)
