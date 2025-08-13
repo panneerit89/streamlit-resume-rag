@@ -212,14 +212,12 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Main header with ChatGPT-5 inspired design
-st.markdown("""
-# Main header with ChatGPT-5 inspired design
-st.markdown("""
-<div style="text-align: center; margin-bottom: 3rem;">
-    <h1 class="main-title">🤖 Resume RAG Chatbot</h1>
-    <p class="subtitle">AI-Powered Resume Analysis & Candidate Screening</p>
-</div>
-""", unsafe_allow_html=True)
+# Main header using Streamlit components
+st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
+st.title("🤖 Resume RAG Chatbot")
+st.markdown("### AI-Powered Resume Analysis & Candidate Screening")
+st.markdown('</div>', unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
 # Simple instructions using Streamlit components
 col1, col2, col3 = st.columns(3)
